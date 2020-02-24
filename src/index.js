@@ -6,11 +6,12 @@ import TransactionList from './components/TransactionList';
 
 import './styles/style.min.css';
 
-import {itemsRef} from './components/Firebase';
+// import {itemsRef} from './components/Firebase';
 import * as firebase from 'firebase';
 import * as firebaseui from 'firebaseui';
 import * as TransactionSettings from './components/TransactionSettings';
 
+firebase.initializeApp(window.firebaseConfig);
 var db = firebase.firestore();
 
 // MAIN CLASS

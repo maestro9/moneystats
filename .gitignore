@@ -28,3 +28,4 @@ package-lock.json
 /public/settings.js
 info.txt
 datatemp.js
+src/styles/style.min.css.map

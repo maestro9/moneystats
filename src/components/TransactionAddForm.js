@@ -43,7 +43,7 @@ class TransactionAddForm extends React.Component {
 		let status      = array[4] || "Completed";
 		let amount_usd  = null;
 		// convert to usd if needed
-		if (currency.toLowerCase() != "usd") {
+		if (currency.toLowerCase() !== "usd") {
 			if (array[5]) {
 				amount_usd = array[5];
 			} else {
