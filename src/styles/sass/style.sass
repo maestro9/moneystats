@@ -1,0 +1,57 @@
+// compileCompressed: ../$1.min.css, sourceMap: true
+
+$color-text: #594D4B
+$color-link: #7476b7
+$color-hover: darken($color-link, 5%)
+$color-select: #776a85
+$color-focus: #b3daac
+
+@import 'common/reset'
+@import 'common/typo'
+@import 'common/inputs'
+@import 'common/buttons'
+@import 'common/switch'
+
+@import 'components/auth'
+@import 'components/chart'
+@import 'components/addform'
+@import 'components/settings'
+@import 'components/list'
+
+// Body
+
+body
+	background-image: url(../images/bg.jpg)
+	background-size: cover
+	background-attachment: fixed
+	color: $color-text
+	font: 400 16px/26px $font-stack
+
+// Flex
+
+.flex
+	display: flex
+
+// Container
+
+.container
+	max-width: 1000px
+	margin: 50px auto
+	position: relative
+
+	> div > div > div
+		background: #fff
+		border-radius: 3px
+		margin-bottom: 30px
+		box-shadow: 0 5px 10px rgba(0,0,0,0.05)
+		padding: 50px 70px
+		overflow: hidden
+
+// Loading
+
+.loading
+	text-align: center
+	margin: 7px 2px 2px 2px
+	i
+		font-size: 32px
+		color: #d5d6e8

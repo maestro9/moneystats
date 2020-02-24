@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+		<link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/assets/favicon/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="%PUBLIC_URL%/assets/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="%PUBLIC_URL%/assets/favicon/favicon-16x16.png">
+		<link rel="manifest" href="%PUBLIC_URL%/assets/favicon/site.webmanifest">
+
+		<link rel="stylesheet" href="%PUBLIC_URL%/assets/fontello/fontello.css">
+		<link rel="stylesheet" href="%PUBLIC_URL%/assets/fontello/animation.css">
+
+		<link rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
+		<!--
+			Notice the use of %PUBLIC_URL% in the tags above.
+			It will be replaced with the URL of the `public` folder during the build.
+			Only files inside the `public` folder can be referenced from the HTML.
+
+			Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+			work correctly both with client-side routing and a non-root public URL.
+			Learn how to configure a non-root public URL by running `npm run build`.
+		-->
+		<title>Money Stats</title>
+	</head>
+	<body>
+
+		<div class="container">
+			<div id="transactions" class="disable_removing show_only_income"></div>
+		</div>
+
+		<div id="auth-overlay">
+			<div>
+				<h2>Authentication</h2>
+				<div id="firebaseui-auth-container"></div>
+				<div id="loader"><div className="loading"><i className="icon-spin4 animate-spin"></i></div></div>
+			</div>
+		</div>
+
+		<script src="./settings.js" charset="utf-8"></script>
+	</body>
+</html>

@@ -1,0 +1,53 @@
+// main: ../style.sass
+
+#transactions
+	&.show_only_income
+		li.negative
+			display: none
+	&.disable_removing
+		li span:nth-of-type(5)
+			display: none!important
+
+.transactions
+	display: flex
+	flex-direction: column
+
+	.year
+		margin-bottom: 3rem
+		h2
+			margin-bottom: 2rem
+
+	li
+		display: flex
+		justify-content: space-between
+		position: relative
+		margin-right: -40px
+		padding-right: 40px
+		&.positive span:nth-of-type(4)
+			color: #60bc3e
+		&.negative span:nth-of-type(4)
+			color: lighten($color-text, 20%)
+		&:hover
+			span:nth-of-type(5)
+				display: block
+
+		span
+			&:first-of-type
+				width: 25%
+			&:nth-of-type(2)
+				width: 55%
+			&:nth-of-type(3)
+				width: 10%
+			&:nth-of-type(4)
+				width: 10%
+				text-align: right
+			&:nth-of-type(5)
+				display: none
+				padding: 0 5px
+				position: absolute
+				right: 0
+				color: #cbcbcb
+				cursor: pointer
+				transition-duration: .3s
+				&:hover
+					color: #f26e6e
