@@ -4,12 +4,17 @@ import Moment from 'moment';
 
 class LineChart extends React.Component {
 
+	/**
+	 * Prepares data for chart and statistics
+	 * @param {object} data from app's state.data
+	 * @returns {object} with prepared data
+	 */
 	chartData(data) {
 
 		// Create an array "months" with all months
-		// even if they don't have any transactions
-		// From the month of first transaction
+		// from the month of first transaction
 		// to now (or last transaction in the future)
+		// even if they don't have any transactions
 
 		let dates  = [];
 		let format = "YYYY MMM";
@@ -146,6 +151,10 @@ class LineChart extends React.Component {
 		return {data: chartData, statistics: income_copy };
 	}
 
+	/**
+	 * @param {object} obj with data
+	 * @returns {dom} with statistics by year
+	 */
 	statistics(obj) {
 		// create stats object
 		let stats = {};
@@ -164,6 +173,10 @@ class LineChart extends React.Component {
 		);
 	}
 
+	/**
+	 * Renders chart and statistics
+	 * @returns {dom} chart and statistics by year
+	 */
 	render() {
 
 		// Set options

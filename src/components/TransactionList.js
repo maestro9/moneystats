@@ -2,12 +2,22 @@ import React from 'react';
 
 class TransactionList extends React.Component {
 
+	/**
+	 * Doesn't really do anything. Sends id to real removing function
+	 * @param {string} id of removing transaction
+	 * @param {object} event
+	 */
 	removeTransaction(id, event) {
 		event.preventDefault();
 		// remove
 		this.props.removeTransaction(id);
 	}
 
+	/**
+	 * Renders list of transactions of given year
+	 * @param {string} year
+	 * @returns {dom} with transactions of this year
+	 */
 	renderItems(year) {
 		return(
 			<div className="year_items">
@@ -27,6 +37,10 @@ class TransactionList extends React.Component {
 		)
 	}
 
+	/**
+	 * Renders list of transactions by year
+	 * @returns {dom} with transactions by year
+	 */
 	render() {
 		// if data is available
 		if (this.props.data) {

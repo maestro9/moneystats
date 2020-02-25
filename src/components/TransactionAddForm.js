@@ -1,7 +1,19 @@
 import React from 'react';
 import Moment from 'moment';
+import { toast, Slide } from 'react-toastify';
+
+// Configure Notifications
+
+toast.configure({
+	autoClose: 4000,
+	transition: Slide
+});
+
+// List of supported currencies
 
 const supported_currencies = ['cad', 'hkd', 'isk', 'php', 'dkk', 'huf', 'czk', 'gbp', 'ron', 'sek', 'idr', 'inr', 'brl', 'rub', 'hrk', 'jpy', 'thb', 'chf', 'eur', 'myr', 'bgn', 'try', 'cny', 'nok', 'nzd', 'zar', 'usd', 'mxn', 'sgd', 'aud', 'ils', 'krw', 'pln'];
+
+// Class
 
 class TransactionAddForm extends React.Component {
 
@@ -20,8 +32,14 @@ class TransactionAddForm extends React.Component {
 		let url = `https://api.exchangeratesapi.io/${date}?base=USD&symbols=${currency}`;
 
 		xmlHttp.open( "GET", url, false );
-		xmlHttp.onerror = () => { console.log("exchangeratesapi.io couldn't return rates") };
-		xmlHttp.onload  = () => { console.log("Currency successfully converted") };
+		xmlHttp.onerror = () => {
+			console.log("exchangeratesapi.io couldn't return rates");
+			// Notification
+			toast("Couldn't convert to USD", {type: 'warning'});
+		};
+		xmlHttp.onload = () => {
+			console.log("Currency successfully converted");
+		};
 		xmlHttp.send( null );
 
 		console.log(xmlHttp.responseText);
@@ -30,6 +48,10 @@ class TransactionAddForm extends React.Component {
 		return converted;
 	}
 
+	/**
+	 * Creates and prepares transaction before saving it to database
+	 * @param {object} event
+	 */
 	createTransaction(event) {
 		event.preventDefault();
 		console.log('Adding new transaction');
@@ -49,6 +71,9 @@ class TransactionAddForm extends React.Component {
 			} else {
 				if (supported_currencies.includes(currency.toLowerCase())) {
 					amount_usd = this.convertToUsd(date, amount, currency);
+				} else {
+					// Notification
+					toast("Couldn't convert to USD", {type: 'warning'});
 				}
 			}
 		}
@@ -71,6 +96,10 @@ class TransactionAddForm extends React.Component {
 		this.refs.newTransactionForm.reset();
 	}
 
+	/**
+	 * Renders form for adding new transaction:
+	 * @returns {dom}
+	 */
 	render() {
 		return (
 			<form ref="newTransactionForm" onSubmit={this.createTransaction.bind(this)}>

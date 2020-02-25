@@ -1,18 +1,28 @@
+import './styles/style.min.css';
+import 'react-toastify/dist/ReactToastify.css';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import LineChart from './components/LineChart';
 import TransactionAddForm from './components/TransactionAddForm';
 import TransactionList from './components/TransactionList';
+import { toast, Slide } from 'react-toastify';
 
-import './styles/style.min.css';
-
-// import {itemsRef} from './components/Firebase';
 import * as firebase from 'firebase';
 import * as firebaseui from 'firebaseui';
 import * as TransactionSettings from './components/TransactionSettings';
 
+// Configure Database
+
 firebase.initializeApp(window.firebaseConfig);
 var db = firebase.firestore();
+
+// Configure Notifications
+
+toast.configure({
+	autoClose: 4000,
+	transition: Slide,
+});
 
 // MAIN CLASS
 
@@ -32,6 +42,7 @@ class Transactions extends React.Component {
 		this.saveTransaction = this.saveTransaction.bind(this);
 		this.removeTransaction = this.removeTransaction.bind(this);
 		// On component init: check if user is signed in
+		toast("Couldn't save transaction", {type: 'error'});
 		this.isSignedIn();
 	}
 
@@ -90,11 +101,18 @@ class Transactions extends React.Component {
 		ui.start('#firebaseui-auth-container', uiConfig);
 	}
 
+	/**
+	 * Saves transaction to database
+	 * @param {string} docname id of saving document
+	 * @param {object} doc saving document
+	 */
 	saveTransaction(docname,doc) {
 		// add to database
 		db.collection("mdata").doc(docname).set(doc)
 		.then(() => {
 			console.log(`Document with id ${docname} successfully written!`);
+			//  Notification
+			toast("Transaction saved", {type: 'success'});
 			// define variables
 			let year  = doc.date.split(', ')[1];
 			let years = new Set(this.state.years);
@@ -114,9 +132,15 @@ class Transactions extends React.Component {
 		})
 		.catch(error => {
 			console.error(`Error writing document with id ${docname}: ${error}`);
+			// Notification
+			toast("Couldn't save transaction", {type: 'error'});
 		});
 	}
 
+	/**
+	 * Removes transaction from database
+	 * @param {string} id of removing document
+	 */
 	removeTransaction(id) {
 		// remove from database
 		db.collection("mdata").doc(id).delete()
@@ -145,11 +169,18 @@ class Transactions extends React.Component {
 				years : years.sort().reverse()
 			});
 			console.log(`Document with id ${id} and index ${index} successfully deleted!`);
+			// Notification
+			toast("Transaction removed", {type: 'success'});
 		}).catch(function(error) {
 			console.error(`Error removing document with id ${id}: ${error}`);
+			// Notification
+			toast("Couldn't remove transaction", {type: 'error'});
 		});
 	}
 
+	/**
+	 * Gets documents from database and saves them to state
+	 */
 	fetchData() {
 		db.collection("mdata").get().then(querySnapshot => {
 			let array = [];
@@ -174,6 +205,10 @@ class Transactions extends React.Component {
 		});
 	}
 
+	/**
+	 * Renders app interface:
+	 * @returns {dom} LineChart, TransactionAddForm, Setting, TransactionList
+	 */
 	render() {
 		return (
 			<div>
