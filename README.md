@@ -6,7 +6,7 @@ This app can help you tracking your income and expenses.
 
 ## Installation
 
-- Download [Latest Release](https://github.com/maestro9/moneystats/releases)
+- Download `build.zip` from [Latest Releases](https://github.com/maestro9/moneystats/releases)
 - Unpack the ZIP file anywhere. Done!
 
 ## Setting Up A Database
