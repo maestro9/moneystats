@@ -199,8 +199,6 @@ class Transactions extends React.Component {
 			console.log("Documents:", array);
 			// assign docs and years to props
 			years = Array.from(years);
-			console.log(array);
-			console.log(years.sort().reverse());
 			this.setState({data: array, years: years.sort().reverse()});
 		}).catch(error => {
 			// Error
