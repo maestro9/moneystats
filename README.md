@@ -1,6 +1,8 @@
 # Money Stats
 
-This app can help you to track your income and expenses.
+This app can help you tracking your income and expenses.
+
+![Screenshot](./screenshot.jpg)
 
 ## Installation
 

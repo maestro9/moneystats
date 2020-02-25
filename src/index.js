@@ -43,6 +43,8 @@ class Transactions extends React.Component {
 		this.removeTransaction = this.removeTransaction.bind(this);
 		// On component init: check if user is signed in
 		this.isSignedIn();
+		// this.fakeData();
+		// this.fakeData = this.fakeData.bind(this);
 	}
 
 	/**
@@ -197,12 +199,43 @@ class Transactions extends React.Component {
 			console.log("Documents:", array);
 			// assign docs and years to props
 			years = Array.from(years);
+			console.log(array);
+			console.log(years.sort().reverse());
 			this.setState({data: array, years: years.sort().reverse()});
 		}).catch(error => {
 			// Error
 			console.log("Error getting document:", error);
 		});
 	}
+
+	/**
+	 * Loads fake data
+	 */
+	fakeData() {
+		let data = [
+			{'date':'17 Dec, 2019', 'description':'Fast Foxes LTD',  'amount':'150.00', 'currency':'USD','status':'completed','amount_usd':null},
+			{'date':'01 Dec, 2019', 'description':'Smol Puppies Inc','amount':'57.50',  'currency':'EUR','status':'completed','amount_usd':'66.13'},
+			{'date':'05 Dec, 2019', 'description':'Christmas Gifts', 'amount':'-97.00', 'currency':'USD','status':'completed','amount_usd':null},
+			{'date':'16 Nov, 2019', 'description':'AliFast' ,        'amount':'-24.99', 'currency':'USD','status':'completed','amount_usd':null},
+			{'date':'12 Nov, 2019', 'description':'Doggo',           'amount':'299.00', 'currency':'USD','status':'completed','amount_usd':null},
+			{'date':'29 Oct, 2019', 'description':'Ducks & Hats',    'amount':'108.00', 'currency':'USD','status':'completed','amount_usd':null},
+			{'date':'10 Sep, 2019', 'description':'Hooli',           'amount':'30.77',  'currency':'USD','status':'completed','amount_usd':null},
+			{'date':'22 Aug, 2019', 'description':'Umbrella Corp',   'amount':'39.50',  'currency':'USD','status':'completed','amount_usd':null},
+			{'date':'04 Jul, 2019', 'description':'Hooli',           'amount':'239.90', 'currency':'USD','status':'completed','amount_usd':null},
+			{'date':'10 May, 2019', 'description':'Pineapple',       'amount':'408.06', 'currency':'USD','status':'completed','amount_usd':null},
+			{'date':'01 Jan, 2020', 'description':'iBay',            'amount':'-99.99', 'currency':'USD','status':'completed','amount_usd':null},
+			{'date':'01 Jan, 2020', 'description':'Cats LTD',        'amount':'40.64',  'currency':'USD','status':'completed','amount_usd':null},
+			{'date':'08 Feb, 2020', 'description':'Honey badger',    'amount':'129.99', 'currency':'USD','status':'completed','amount_usd':null},
+			{'date':'12 Feb, 2020', 'description':'Cute axolotl',    'amount':'50.00',  'currency':'USD','status':'completed','amount_usd':null},
+			{'date':'14 Feb, 2020', 'description':'iBay',            'amount':'-12.00', 'currency':'USD','status':'completed','amount_usd':null},
+			{'date':'05 Jan, 2020',  'description':'Hedgehogs LTD',   'amount':'240.00', 'currency':'EUR','status':'completed','amount_usd':'273.60'},
+		]
+		let years = ['2020','2019'];
+		setTimeout(() => {
+			this.setState({data: data, years: years});
+		}, 300);
+	}
+
 
 	/**
 	 * Renders app interface:
