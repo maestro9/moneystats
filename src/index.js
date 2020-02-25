@@ -42,7 +42,6 @@ class Transactions extends React.Component {
 		this.saveTransaction = this.saveTransaction.bind(this);
 		this.removeTransaction = this.removeTransaction.bind(this);
 		// On component init: check if user is signed in
-		toast("Couldn't save transaction", {type: 'error'});
 		this.isSignedIn();
 	}
 
