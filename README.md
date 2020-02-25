@@ -101,6 +101,7 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 - [React Chart.js](https://github.com/jerairrest/react-chartjs-2)
 - [Moment.js](https://momentjs.com/)
 - [exchangeratesapi.io](https://exchangeratesapi.io/)
+- [React-Toastify](https://github.com/fkhadra/react-toastify)
 
 ## Learn More About React
 
