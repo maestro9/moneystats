@@ -110,7 +110,7 @@ class LineChart extends React.Component {
 			if (val == 0) {
 				incomePointBorderColor.push('transparent');
 			} else {
-				incomePointBorderColor.push('#7acf85');
+				incomePointBorderColor.push('#86c37b');
 			}
 		});
 
@@ -132,7 +132,7 @@ class LineChart extends React.Component {
 				{
 					label: 'Income',
 					fill: false,
-					borderColor: '#7acf85',
+					borderColor: '#86c37b',
 					pointBorderColor: incomePointBorderColor,
 					pointBackgroundColor: 'transparent',
 					pointHoverBackgroundColor: 'rgba(0, 0, 0, 0.1)',
@@ -212,7 +212,6 @@ class LineChart extends React.Component {
 			return (
 				<div>
 					<div className="with_chart">
-					<h2>Statistics</h2>
 						<div>
 							<Line data={chartData.data} options={options} />
 						</div>
