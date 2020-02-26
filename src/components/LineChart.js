@@ -216,27 +216,32 @@ class LineChart extends React.Component {
 			}
 		};
 
-		var plugins = {
-			afterInit: function() {
-				document.querySelector('.with_chart').scrollLeft += 100000;
-			}
-		};
-
 		// If data is available
 
 		if (this.props.data) {
 			let chartData   = this.chartData(this.props.data);
 			let isChartLong = false;
-			let style       = null;
 			if (chartData.data.labels.length > 60) {
 				isChartLong = true;
-				style       = { 'width': chartData.data.labels.length*20 };
 			}
+			var plugins = [{
+				beforeInit: function() {
+					let el = document.querySelector('.scrollable');
+					if (el) { el.style.width = chartData.data.labels.length*20 + 'px'; }
+				},
+				afterInit: function() {
+					document.querySelector('.with_chart').scrollLeft += 100000;
+				},
+				afterUpdate: function() {
+					let el = document.querySelector('.scrollable');
+					if (el) { el.style.width = chartData.data.labels.length*20 + 'px'; }
+				}
+			}];
 			// Return chart
 			return (
 				<div>
 					<div className="with_chart">
-						<div style={style} className={isChartLong ? 'scrollable': ''}>
+						<div className={isChartLong ? 'scrollable': ''}>
 							<Line data={chartData.data} options={options} plugins={plugins} />
 							<div className="legend">
 								<div><i className="income"></i>Income</div>
