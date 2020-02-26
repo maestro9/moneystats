@@ -191,29 +191,57 @@ class LineChart extends React.Component {
 						maxRotation: 20,
 						minRotation: 0
 					}
+				}],
+				yAxes: [{
+					position: 'right',
+					// ticks: {
+						// fontColor: '#fff',
+						// Include a dollar sign in the ticks
+						// display: false
+						// callback: function(value, index, values) {
+							// return '$' + value;
+						// }
+					// }
 				}]
 			},
 			legend: {
 				position: 'bottom',
-				align: 'end',
-				labels: {
-					fontSize: 14,
-					fontFamily: "Montserrat, 'Helvetica Neue', Helvetica, Arial, sans-serif",
-					padding: 20
-				}
+				display: false
+			// 	align: 'end',
+			// 	labels: {
+			// 		fontSize: 14,
+			// 		fontFamily: "Montserrat, 'Helvetica Neue', Helvetica, Arial, sans-serif",
+			// 		padding: 20
+			// 	}
+			}
+		};
+
+		var plugins = {
+			afterInit: function() {
+				document.querySelector('.with_chart').scrollLeft += 100000;
 			}
 		};
 
 		// If data is available
 
 		if (this.props.data) {
-			var chartData = this.chartData(this.props.data);
+			let chartData   = this.chartData(this.props.data);
+			let isChartLong = false;
+			let style       = null;
+			if (chartData.data.labels.length > 60) {
+				isChartLong = true;
+				style       = { 'width': chartData.data.labels.length*20 };
+			}
 			// Return chart
 			return (
 				<div>
 					<div className="with_chart">
-						<div>
-							<Line data={chartData.data} options={options} />
+						<div style={style} className={isChartLong ? 'scrollable': ''}>
+							<Line data={chartData.data} options={options} plugins={plugins} />
+							<div className="legend">
+								<div><i className="income"></i>Income</div>
+								<div><i className="expenses"></i>Expenses</div>
+							</div>
 						</div>
 					</div>
 					{this.statistics(chartData.statistics)}
