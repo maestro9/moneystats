@@ -207,6 +207,41 @@ class Transactions extends React.Component {
 	}
 
 	/**
+	 * Used only in development
+	 * renames docs (changes their ids)
+	 */
+	// renameDocs(array) {
+	// 	for (let item of array) {
+	// 		let d = item.date;
+	// 		let dn = d.slice(-4) + '_' + d.slice(3, -6) + '_' + d.slice(0, 2);
+	// 		let random  = Math.random().toString(36).slice(-7);
+	// 		let docname = dn + '__' + random;
+	// 		delete item.id;
+	// 		delete item.year;
+	// 		db.collection("mdata").doc(docname).set(item)
+	// 		.then(() => {
+	// 			console.log(`Document with id ${docname} successfully written!`);
+	// 		})
+	// 	}
+	// }
+
+	/**
+	 * Used only in development
+	 * deletes docs
+	 */
+	// deleteDocs(array) {
+	// 	for (let item of array) {
+	// 		if (item.id.slice(0, 3) !== '201') {
+	// 			db.collection("mdata").doc(item.id).delete()
+	// 			.then(() => {
+	// 				console.log(`Document with id ${item.id} successfully deleted!`);
+	// 			});
+	// 		}
+	// 	}
+	// }
+
+	/**
+	 * Used only in development
 	 * Loads fake data
 	 */
 	fakeData() {
@@ -233,7 +268,6 @@ class Transactions extends React.Component {
 			this.setState({data: data, years: years});
 		}, 300);
 	}
-
 
 	/**
 	 * Renders app interface:

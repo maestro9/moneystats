@@ -191,9 +191,9 @@ class TransactionAddForm extends React.Component {
 
 		// generate new doc name
 
-		let date1   = array[0].replace(/[^A-Z0-9]/ig, "_");
+		let date1   = date.slice(-4) + '_' + date.slice(3, -6) + '_' + date.slice(0, 2);
 		let random  = Math.random().toString(36).slice(-7);
-		let docname = date1 + "_" + random;
+		let docname = date1 + "__" + random;
 
 		// create new doc
 
