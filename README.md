@@ -23,6 +23,7 @@ The app stores it's data in a Firebase database. You will need to create **free 
 	- amount / *string* / 50.00
 	- currency / *string* / USD
 	- status / *string* / Completed
+	- comment / *string* / Test
 	- **Note: The fields names above must be in lower case**
 - Setup access rules:
 	- On the database "Rules" tab replace the
