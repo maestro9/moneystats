@@ -196,7 +196,17 @@ class Transactions extends React.Component {
 				// push unique years to years array
 				years.add(year);
 			});
+			// log docs
 			console.log("Documents:", array);
+			for (let doc of array) {
+				let errors = '✔';
+				if (doc.amount && doc.amount_usd) {
+					if (doc.amount > 0 && doc.amount_usd < 0 || doc.amount < 0 && doc.amount_usd > 0) {
+						errors = '×';
+					}
+				}
+				console.log(`${doc.id} --- ${doc.status} ${errors} ${doc.date} ${doc.description}`);
+			}
 			// assign docs and years to props
 			years = Array.from(years);
 			this.setState({data: array, years: years.sort().reverse()});
