@@ -13,6 +13,14 @@ toast.configure({
 
 const supported_currencies = ['cad', 'hkd', 'isk', 'php', 'dkk', 'huf', 'czk', 'gbp', 'ron', 'sek', 'idr', 'inr', 'brl', 'rub', 'hrk', 'jpy', 'thb', 'chf', 'eur', 'myr', 'bgn', 'try', 'cny', 'nok', 'nzd', 'zar', 'usd', 'mxn', 'sgd', 'aud', 'ils', 'krw', 'pln'];
 
+// Today
+
+const today       = new Date;
+const today_month = today.toLocaleString('en-US', { month: 'short' });
+const today_day   = today.toLocaleString('en-US', { day: '2-digit' });
+const today_year  = today.getFullYear();
+const today_full  = today_day + ' ' + today_month + ', ' + today_year;
+
 // Class
 
 class TransactionAddForm extends React.Component {
@@ -72,11 +80,6 @@ class TransactionAddForm extends React.Component {
 			}
 		} else {
 			errors.push('Amount can\'t be empty');
-		}
-
-		// check if usd amount contains unwanted symbols
-		if (fields.amount_usd && isNotNumber(fields.amount_usd)) {
-			errors.push('Wrong USD Amount');
 		}
 
 		// check if currency is empty
@@ -147,20 +150,19 @@ class TransactionAddForm extends React.Component {
 		event.preventDefault();
 		console.log('Adding new transaction');
 
-		// make an array with data
-
-		let array = this.refs.newTransaction.value.split(';').map(item => item.trim());
-
 		// create variables
 
-		let date        = array[0];
-		let description = array[1];
-		let amount      = array[2];
-		let currency    = array[3];
-		let status      = array[4] || "Completed";
-		let amount_usd  = null;
+		let date        = this.refs.date.value.trim();
+		let description = this.refs.description.value.trim();
+		let amount      = this.refs.amount.value;
+		let currency    = this.refs.currency.value.trim();
+		let status      = this.refs.status.value;
+		let comment     = this.refs.comment.value.trim();
+		let amount_usd  = this.refs.amount_usd.value || null;
 
-		if (amount) { amount = amount.replace(/,/g, '') }
+		// prepare data
+
+		if (amount)   { amount = amount.replace(/,/g, '') }
 		if (currency) { currency = currency.toUpperCase() }
 
 		// validate transaction data
@@ -168,8 +170,7 @@ class TransactionAddForm extends React.Component {
 		let valid = this.validate({
 			date: date,
 			amount: amount,
-			currency: currency,
-			amount_usd: array[5]
+			currency: currency
 		});
 
 		if (!valid) { return false; }
@@ -177,8 +178,8 @@ class TransactionAddForm extends React.Component {
 		// convert to usd if needed
 
 		if (currency.toLowerCase() !== "usd") {
-			if (array[5]) {
-				amount_usd = array[5].replace(/,/g, '');
+			if (amount_usd) {
+				amount_usd = amount_usd.replace(/,/g, '');
 			} else {
 				if (supported_currencies.includes(currency.toLowerCase())) {
 					amount_usd = this.convertToUsd(date, amount, currency);
@@ -203,7 +204,8 @@ class TransactionAddForm extends React.Component {
 			amount:      amount,
 			currency:    currency,
 			status:      status,
-			amount_usd:  amount_usd
+			amount_usd:  amount_usd,
+			comment: comment
 		}
 
 		// send doc for saving
@@ -219,18 +221,44 @@ class TransactionAddForm extends React.Component {
 	 * Renders form for adding new transaction:
 	 * @returns {dom}
 	 */
+
 	render() {
 		return (
 			<form ref="newTransactionForm" onSubmit={this.createTransaction.bind(this)}>
 				<h2>Add Transaction</h2>
+
 				<div className="flex">
 					<label>
-						Raw data
-						<input type="text" ref="newTransaction" placeholder="Date; Description; Amount; Currency; Status" />
+						Date <input type="text" ref="date" defaultValue={ today_full } />
+					</label>
+					<label>
+						Description <input type="text" ref="description" placeholder="Company name" />
+					</label>
+					<label>
+						Comment <input type="text" ref="comment" placeholder="Service name" />
+					</label>
+				</div>
+
+				<div className="flex">
+					<label>
+						Amount <input type="text" ref="amount" placeholder="Positive or negative" />
+					</label>
+					<label>
+						Currency <input type="text" ref="currency" defaultValue="USD" />
+					</label>
+					<label>
+						Status
+						<select ref="status">
+							<option value="Completed">Completed</option>
+							<option value="Upcoming">Upcoming</option>
+						</select>
+					</label>
+					<label>
+						USD Amount<input type="text" ref="amount_usd" placeholder="Optional" />
 					</label>
 					<input className="btn" type="submit" value="Submit" />
 				</div>
-				<p className="bright"><b>Example:</b> 01 Mar, 2019; Company Name; -5.00; EUR; Completed</p>
+
 			</form>
 		);
 	}

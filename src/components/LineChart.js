@@ -53,6 +53,12 @@ class LineChart extends React.Component {
 
 		data.forEach((item, i) => {
 
+			// Only for completed transactions
+
+			if (item.status != "Completed") {
+				return;
+			}
+
 			// Variables
 
 			let date   = item.date.split(' ');
