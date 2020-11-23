@@ -226,26 +226,37 @@ class TransactionAddForm extends React.Component {
 		return (
 			<form ref="newTransactionForm" onSubmit={this.createTransaction.bind(this)}>
 				<h2>Add Transaction</h2>
-
 				<div className="flex">
+
 					<label>
 						Date <input type="text" ref="date" defaultValue={ today_full } />
 					</label>
+
 					<label>
 						Description <input type="text" ref="description" placeholder="Company name" />
 					</label>
+
 					<label>
 						Comment <input type="text" ref="comment" placeholder="Service name" />
 					</label>
-				</div>
 
+				</div>
 				<div className="flex">
+
 					<label>
 						Amount <input type="text" ref="amount" placeholder="Positive or negative" />
 					</label>
+
 					<label>
-						Currency <input type="text" ref="currency" defaultValue="USD" />
+						Currency
+						<select ref="currency">
+							<option value="USD">USD</option>
+							<option value="EUR">EUR</option>
+							<option value="RUB">RUB</option>
+							<option value="KZT">KZT</option>
+						</select>
 					</label>
+
 					<label>
 						Status
 						<select ref="status">
@@ -253,12 +264,13 @@ class TransactionAddForm extends React.Component {
 							<option value="Upcoming">Upcoming</option>
 						</select>
 					</label>
+
 					<label>
-						USD Amount<input type="text" ref="amount_usd" placeholder="Optional" />
+						USD Amount <input type="text" ref="amount_usd" placeholder="Optional" />
 					</label>
+
 					<input className="btn" type="submit" value="Submit" />
 				</div>
-
 			</form>
 		);
 	}
