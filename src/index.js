@@ -38,9 +38,12 @@ class Transactions extends React.Component {
 			years: null
 		};
 
-		this.fetchData = this.fetchData.bind(this);
-		this.saveTransaction = this.saveTransaction.bind(this);
+		this.fetchData         = this.fetchData.bind(this);
+		this.saveTransaction   = this.saveTransaction.bind(this);
+		this.editTransaction   = this.editTransaction.bind(this);
 		this.removeTransaction = this.removeTransaction.bind(this);
+
+		this.transactionAddFormRef = React.createRef();
 		// On component init: check if user is signed in
 		this.isSignedIn();
 		// this.fakeData();
@@ -107,7 +110,7 @@ class Transactions extends React.Component {
 	 * @param {string} docname id of saving document
 	 * @param {object} doc saving document
 	 */
-	saveTransaction(docname,doc) {
+	saveTransaction(docname, doc, action) {
 		// add to database
 		db.collection("mdata").doc(docname).set(doc)
 		.then(() => {
@@ -121,7 +124,17 @@ class Transactions extends React.Component {
 			doc.year = year;
 			doc.id = docname;
 			// update data
-			this.state.data.push(doc);
+			if (action == "add") {
+				// add
+				this.state.data.push(doc);
+			} else if (action == "update") {
+				// update
+				for (let [i, item] of this.state.data.entries()) {
+					if (item.id == doc.id) {
+						this.state.data[i] = doc;
+					}
+				}
+			}
 			// add year to years
 			years.add(year);
 			years = Array.from(years);
@@ -180,8 +193,18 @@ class Transactions extends React.Component {
 	}
 
 	/**
+	 * Populates TransactionAddForm with item data
+	 * @param {object} item to edit
+	 */
+
+	editTransaction(item) {
+		this.transactionAddFormRef.current.populateForm(item);
+	}
+
+	/**
 	 * Gets documents from database and saves them to state
 	 */
+
 	fetchData() {
 		db.collection("mdata").get().then(querySnapshot => {
 			let array = [];
@@ -290,7 +313,7 @@ class Transactions extends React.Component {
 					<LineChart data={this.state.data} />
 				</div>
 				<div id="transaction_form">
-					<TransactionAddForm saveTransaction={this.saveTransaction} />
+					<TransactionAddForm ref={this.transactionAddFormRef} saveTransaction={this.saveTransaction} />
 				</div>
 				<div id="transactions_list">
 					<div id="transaction_settings" className="flex">
@@ -301,7 +324,7 @@ class Transactions extends React.Component {
 							<label>Disable removing<input type="checkbox" defaultChecked /><span className="slider"></span></label>
 						</div>
 					</div>
-					<TransactionList data={this.state.data} years={this.state.years} removeTransaction={this.removeTransaction} />
+					<TransactionList data={this.state.data} years={this.state.years} removeTransaction={this.removeTransaction} editTransaction={this.editTransaction} />
 				</div>
 			</div>
 		);

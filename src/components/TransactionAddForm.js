@@ -152,6 +152,7 @@ class TransactionAddForm extends React.Component {
 
 		// create variables
 
+		let id          = this.refs.id.value;
 		let date        = this.refs.date.value.trim();
 		let description = this.refs.description.value.trim();
 		let amount      = this.refs.amount.value;
@@ -190,11 +191,20 @@ class TransactionAddForm extends React.Component {
 			}
 		}
 
-		// generate new doc name
+		// generate new doc name if needed
+		// set action: update or add
 
-		let date1   = date.slice(-4) + '_' + date.slice(3, -6) + '_' + date.slice(0, 2);
-		let random  = Math.random().toString(36).slice(-7);
-		let docname = date1 + "__" + random;
+		let docname, action;
+
+		if (id) {
+			docname = id;
+			action = "update";
+		} else {
+			let date1   = date.slice(-4) + '_' + date.slice(3, -6) + '_' + date.slice(0, 2);
+			let random  = Math.random().toString(36).slice(-7);
+			docname = date1 + "__" + random;
+			action = "add";
+		}
 
 		// create new doc
 
@@ -210,11 +220,38 @@ class TransactionAddForm extends React.Component {
 
 		// send doc for saving
 
-		this.props.saveTransaction(docname,doc);
+		this.props.saveTransaction(docname, doc, action);
 
 		// reset form
 
+		this.resetForm();
+	}
+
+	/**
+	 * Populates form with item data
+	 */
+
+	populateForm(item) {
+		// reset form
+		this.resetForm();
+		// populate form
+		for (let key in item) {
+			if (this.refs[key]) {
+				this.refs[key].value = item[key];
+			}
+		}
+		// scroll to form
+		let form = document.getElementById('transaction_form');
+		form.scrollIntoView({block: "start", behavior: "smooth"});
+	}
+
+	/**
+	 * Resets form
+	 */
+
+	resetForm() {
 		this.refs.newTransactionForm.reset();
+		this.refs.id.value = "";
 	}
 
 	/**
@@ -225,7 +262,9 @@ class TransactionAddForm extends React.Component {
 	render() {
 		return (
 			<form ref="newTransactionForm" onSubmit={this.createTransaction.bind(this)}>
+				<input type="hidden" ref="id" />
 				<h2>Add Transaction</h2>
+				<div className="reset_form" onClick={this.resetForm.bind(this)}>Reset</div>
 				<div className="flex">
 
 					<label>
@@ -236,8 +275,8 @@ class TransactionAddForm extends React.Component {
 						Description <input type="text" ref="description" placeholder="Company name" />
 					</label>
 
-					<label>
-						Comment <input type="text" ref="comment" placeholder="Service name" />
+					<label className="last">
+						Comment <input type="text" ref="comment" placeholder="Comment" />
 					</label>
 
 				</div>

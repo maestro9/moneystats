@@ -14,6 +14,38 @@ class TransactionList extends React.Component {
 	}
 
 	/**
+	* Doesn't really do anything. Sends item's id to real editing function
+	* @param {object} item to edit
+	* @param {object} event
+	 */
+
+	editTransaction(item, event) {
+		event.preventDefault();
+		this.props.editTransaction(item);
+	}
+
+	/**
+	 * Returns formatted comment
+	 * @param {string} comment
+	 * @returns {dom} with formatted comment
+	 */
+
+	formatComment(comment) {
+		if (comment) {
+			if (comment.includes('[') && comment.includes(']')) {
+				let tags = comment.match(/\[(.*?)\]/g);
+				for (let tag of tags) {
+					let tagName = tag.replace(/[\[\]']+/g, '');
+					comment = comment.replace(tag, `<i class="tag ${tagName.toLowerCase()}">${tagName}</i>`);
+				}
+				return comment;
+			} else {
+				return comment;
+			}
+		}
+	}
+
+	/**
 	 * Renders list of transactions of given year
 	 * @param {string} year
 	 * @returns {dom} with transactions of this year
@@ -28,9 +60,9 @@ class TransactionList extends React.Component {
 					.sort((b, a) => Date.parse(a.date) - Date.parse(b.date))
 					.map((item, i) =>
 					<li key={item.id} className={(item.amount > 0 ? 'positive' : 'negative')}>
-						<span>{(item.date).substring(0, item.date.length - 6)}</span>
+						<span onClick={(e) => this.editTransaction(item, e)}>{(item.date).substring(0, item.date.length - 6)}</span>
 						<span>{item.description}</span>
-						<span>{item.comment}</span>
+						<span><div dangerouslySetInnerHTML={{ __html: this.formatComment(item.comment) }} /></span>
 						<span>{item.currency}</span>
 						<span className="bold">{(parseFloat(item.amount).toLocaleString('en-US',{style:'currency',currency:'USD'})).replace('$','')}</span>
 						<span className="remove" onClick={(e) => this.removeTransaction(item.id, e)}><i className="icon-cancel"></i></span>
@@ -79,9 +111,9 @@ class TransactionList extends React.Component {
 							.filter(item => item.status == 'Upcoming')
 							.map(item =>
 							<li key={item.id} className="positive">
-								<span>Upcoming</span>
+								<span onClick={(e) => this.editTransaction(item, e)}><i className="icon-clock"></i></span>
 								<span>{item.description}</span>
-								<span>{item.comment}</span>
+								<span><div dangerouslySetInnerHTML={{ __html: this.formatComment(item.comment) }} /></span>
 								<span>{item.currency}</span>
 								<span className="bold">{(parseFloat(item.amount).toLocaleString('en-US',{style:'currency',currency:'USD'})).replace('$','')}</span>
 								<span className="remove" onClick={(e) => this.removeTransaction(item.id, e)}><i className="icon-cancel"></i></span>

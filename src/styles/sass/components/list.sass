@@ -1,5 +1,16 @@
 // main: ../style.sass
 
+.tag
+	padding: 0 10px
+	background: $color-alt
+	color: #fff
+	font-weight: 600
+	font-size: 14px
+	font-style: normal
+	text-transform: uppercase
+	border-radius: 26px
+	display: inline-block
+
 #transactions
 	&.show_only_income
 		li.negative
@@ -17,15 +28,10 @@
 		h2
 			margin-bottom: 2rem
 		.total
+			@extend .tag
 			position: absolute
 			right: 70px
 			margin-top: -65px
-			padding: 0 10px
-			background: $color-alt
-			color: #fff
-			font-weight: 600
-			font-size: 14px
-			border-radius: 26px
 
 	li
 		display: flex
@@ -41,25 +47,48 @@
 			span:nth-of-type(6)
 				display: block
 
+		.tag
+			height: 20px
+			line-height: 20px
+			font-size: 12px
+			padding: 0 7px
+			&.cover
+				background: #9E5DB4
+			&.remix
+				background: #029CD8
+			&.mixing
+				// default color
+			&.original
+				background: #00A085
+			&.royalties
+				background: #abab9e
+			&.dev
+				background: #ffa937
+
 		span
 			// date
 			&:first-of-type
-				width: 15%
+				width: 9%
+				color: #c3c3c3
 				font-family: $font-mono
+				cursor: pointer
+				transition-duration: .3s
+				&:hover
+					color: $color-link
 			// description
 			&:nth-of-type(2)
-				width: 40%
+				width: 39%
 			// comment
 			&:nth-of-type(3)
-				width: 25%
+				width: 39%
 				color: #c3c3c3
-				font-style: italic
 			// currency
 			&:nth-of-type(4)
-				width: 5%
+				width: 3%
+				font-family: $font-mono
 			// amount
 			&:nth-of-type(5)
-				width: 15%
+				width: 10%
 				text-align: right
 			// delete
 			&:nth-of-type(6)
