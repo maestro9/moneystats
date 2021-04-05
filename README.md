@@ -34,6 +34,8 @@ The app stores it's data in a Firebase database. You will need to create **free 
 - Create a new user
 - Create new app (Settings → General → Your apps → Web app)
 - Сopy settings from `firebaseConfig` object to `settings.js` in the app folder
+- Register on [exchangeratesapi.io](https://exchangeratesapi.io) and get API key
+- Paste the key to `settings.js`
 
 ### If you have transactions in currencies different from USD
 

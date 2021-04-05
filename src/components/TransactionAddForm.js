@@ -35,9 +35,12 @@ class TransactionAddForm extends React.Component {
 
 		console.log('Trying to convert currency...');
 
-		date = Moment(Date.parse(date)).format('YYYY-MM-DD');
+		date    = Moment(Date.parse(date)).format('YYYY-MM-DD');
+		let now = Moment(Date.now()).format('YYYY-MM-DD');
+		if (date == now) { date = "latest"; }
+
 		let xmlHttp = new XMLHttpRequest();
-		let url = `https://api.exchangeratesapi.io/${date}?base=USD&symbols=${currency}`;
+		let url = `http://api.exchangeratesapi.io/v1/${date}?base=EUR&symbols=${currency},USD&access_key=${window.exchangeratesapiConfig.accessKey}`;
 
 		xmlHttp.open( "GET", url, false );
 		xmlHttp.onerror = () => {
@@ -52,7 +55,7 @@ class TransactionAddForm extends React.Component {
 
 		amount = amount.replace(/,/g, '');
 		let response  = JSON.parse(xmlHttp.responseText);
-		let converted = (amount/(response.rates[currency.toUpperCase()])).toFixed(2);
+		let converted = (amount/(response.rates[currency.toUpperCase()]/response.rates.USD)).toFixed(2);
 		return converted;
 	}
 
