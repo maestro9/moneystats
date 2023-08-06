@@ -11,7 +11,7 @@ toast.configure({
 
 // List of supported currencies
 
-const supported_currencies = ['cad', 'hkd', 'isk', 'php', 'dkk', 'huf', 'czk', 'gbp', 'ron', 'sek', 'idr', 'inr', 'brl', 'rub', 'hrk', 'jpy', 'thb', 'chf', 'eur', 'myr', 'bgn', 'try', 'cny', 'nok', 'nzd', 'zar', 'usd', 'mxn', 'sgd', 'aud', 'ils', 'krw', 'pln'];
+// const supported_currencies = ['cad', 'hkd', 'isk', 'php', 'dkk', 'huf', 'czk', 'gbp', 'ron', 'sek', 'idr', 'inr', 'brl', 'rub', 'hrk', 'jpy', 'thb', 'chf', 'eur', 'myr', 'bgn', 'try', 'cny', 'nok', 'nzd', 'zar', 'usd', 'mxn', 'sgd', 'aud', 'ils', 'krw', 'pln'];
 
 // Today
 
@@ -26,11 +26,12 @@ const today_full  = today_day + ' ' + today_month + ', ' + today_year;
 class TransactionAddForm extends React.Component {
 
 	/**
-	 * @param {string} date of transaction (for example: 01 Mar, 2019)
-	 * @param {number} amount of transaction (for example: 5)
-	 * @param {string} currency of transaction (for example: EUR)
-	 * @returns {number} converted amount
+	 * @param  {string} date of transaction (for example: 01 Mar, 2019)
+	 * @param  {number} amount of transaction (for example: 5)
+	 * @param  {string} currency of transaction (for example: EUR)
+	 * @return {number} converted amount
 	 */
+
 	convertToUsd(date, amount, currency) {
 
 		console.log('Trying to convert currency...');
@@ -40,7 +41,8 @@ class TransactionAddForm extends React.Component {
 		if (date == now) { date = "latest"; }
 
 		let xmlHttp = new XMLHttpRequest();
-		let url = `http://api.exchangeratesapi.io/v1/${date}?base=EUR&symbols=${currency},USD&access_key=${window.exchangeratesapiConfig.accessKey}`;
+		let key = window.exchangeratesapiConfig.accessKey;
+		let url = `http://api.exchangeratesapi.io/v1/${date}?base=EUR&symbols=${currency},USD&access_key=${key}`;
 
 		xmlHttp.open( "GET", url, false );
 		xmlHttp.onerror = () => {
@@ -60,10 +62,50 @@ class TransactionAddForm extends React.Component {
 	}
 
 	/**
-	 * Vallidates input data
-	 * @param {object} fields
-	 * @returns {bool} valid or not
+	 * @param  {string} date of transaction (for example: 01 Mar, 2019)
+	 * @param  {number} amount of transaction (for example: 5)
+	 * @param  {string} currency of transaction (for example: EUR)
+	 * @return {number} converted amount
 	 */
+
+	async convertToUsd2(date, amount, currency) {
+		return new Promise((resolve, reject) => {
+
+			console.log('Trying to convert currency...');
+
+			date    = Moment(Date.parse(date)).format('YYYY-MM-DD');
+			let now = Moment(Date.now()).format('YYYY-MM-DD');
+
+			let url = `https://api.exchangerate.host/${date}?base=USD&symbols=${currency}`;
+			let xhr = new XMLHttpRequest();
+
+			xhr.onerror = (error) => {
+				toast("Couldn't convert to USD", {type: 'warning'});
+				console.log("api.exchangerate.host couldn't return rates");
+				reject(error);
+			}
+
+			xhr.onload = () => {
+				let response  = xhr.response;
+				let rate      = response.rates[currency];
+				if (rate) console.log("Currency successfully converted");
+				let converted = (amount/rate).toFixed(2);
+				resolve(converted);
+			}
+
+			xhr.open('GET', url);
+			xhr.responseType = 'json';
+			xhr.send();
+
+		});
+	}
+
+	/**
+	 * Vallidates input data
+	 * @param  {object} fields
+	 * @return {bool}   valid or not
+	 */
+
 	validate(fields) {
 
 		console.log('Validating fields...');
@@ -148,7 +190,8 @@ class TransactionAddForm extends React.Component {
 	 * Creates and prepares transaction before saving it to database
 	 * @param {object} event
 	 */
-	createTransaction(event) {
+
+	async createTransaction(event) {
 
 		event.preventDefault();
 		console.log('Adding new transaction');
@@ -185,12 +228,7 @@ class TransactionAddForm extends React.Component {
 			if (amount_usd) {
 				amount_usd = amount_usd.replace(/,/g, '');
 			} else {
-				if (supported_currencies.includes(currency.toLowerCase())) {
-					amount_usd = this.convertToUsd(date, amount, currency);
-				} else {
-					// Notification
-					toast("Couldn't convert to USD", {type: 'warning'});
-				}
+				amount_usd = await this.convertToUsd2(date, amount, currency) || 0;
 			}
 		}
 
