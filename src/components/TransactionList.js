@@ -66,7 +66,7 @@ class TransactionList extends React.Component {
 
 		// Group transactions
 
-		let groups = this.groupTransactions(items, 'description');
+		let groups = this.groupTransactions(items, 'group');
 
 		// Render transactions
 
@@ -75,14 +75,22 @@ class TransactionList extends React.Component {
 				{Object.keys(groups).map(group => {
 					return(
 						<div className="group" key={group}>
-							<h3>{group}</h3>
+							<h4>
+								{group}
+								<div className="total">{groups[group]['total'].toLocaleString('en-US',{style:'currency',currency:'USD'})}</div>
+							</h4>
 							{groups[group].map((item) =>
 								<li key={item.id} className={(item.amount > 0 ? 'positive' : 'negative')}>
 									<span onClick={(e) => this.editTransaction(item, e)}>{(item.date).substring(0, item.date.length - 6)}</span>
 									<span>{item.description}</span>
 									<span><div dangerouslySetInnerHTML={{ __html: this.formatComment(item.comment) }} /></span>
-									<span>{item.currency}</span>
-									<span className="bold">{(parseFloat(item.amount).toLocaleString('en-US',{style:'currency',currency:'USD'})).replace('$','')}</span>
+									<span>USD</span>
+									<span
+										className="bold"
+										title={(parseFloat(item.amount).toLocaleString('en-US',{style:'currency',currency:'USD'})).replace('$','') + ' ' + item.currency}
+									>
+										{(parseFloat(item.amount_usd || item.amount).toLocaleString('en-US',{style:'currency',currency:'USD'})).replace('$','')}
+									</span>
 									<span className="remove" onClick={(e) => this.removeTransaction(item.id, e)}><i className="icon-cancel"></i></span>
 								</li>
 							)}
@@ -113,6 +121,27 @@ class TransactionList extends React.Component {
 		} else {
 			groups = {All: items};
 		}
+		// Join undefined and other
+		if (!groups['Other']) groups['Other'] = [];
+		if (groups['undefined']) {
+			groups['Other'] = [...groups['undefined'], ...groups['Other']]
+			delete groups['undefined'];
+		}
+		// Calculate totals
+		for (let group in groups) {
+			let total = 0;
+			for (let item of groups[group]) {
+				if (item.currency.toLowerCase() == "usd") {
+					total += parseFloat(item.amount);
+				} else {
+					if (item.amount_usd) {
+						total += parseFloat(item.amount_usd);
+					}
+				}
+			}
+			groups[group].total = total;
+		}
+		// Return groups
 		return groups;
 	}
 

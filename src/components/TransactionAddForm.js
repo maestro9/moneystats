@@ -205,6 +205,7 @@ class TransactionAddForm extends React.Component {
 		let currency    = this.refs.currency.value.trim();
 		let status      = this.refs.status.value;
 		let comment     = this.refs.comment.value.trim();
+		let group       = this.refs.group.value;
 		let amount_usd  = this.refs.amount_usd.value || null;
 
 		// prepare data
@@ -256,7 +257,8 @@ class TransactionAddForm extends React.Component {
 			currency:    currency,
 			status:      status,
 			amount_usd:  amount_usd,
-			comment: comment
+			comment:     comment,
+			group:       group
 		}
 
 		// send doc for saving
@@ -314,6 +316,23 @@ class TransactionAddForm extends React.Component {
 
 					<label>
 						Description <input type="text" ref="description" placeholder="Company name" />
+					</label>
+
+					<label>
+						Group
+						<select ref="group">
+							<option value="Other">Other</option>
+							<option value="---">---</option>
+							<option value="Food">Food</option>
+							<option value="Rent">Rent</option>
+							<option value="Shopping">Shopping</option>
+							<option value="Subscriptions">Subscriptions</option>
+							<option value="Taxes">Taxes</option>
+							<option value="Taxes">Transport</option>
+							<option value="---">---</option>
+							<option value="Development">Development</option>
+							<option value="Music">Music</option>
+						</select>
 					</label>
 
 					<label className="last">
