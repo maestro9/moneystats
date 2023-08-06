@@ -26,8 +26,8 @@ class TransactionList extends React.Component {
 
 	/**
 	 * Returns formatted comment
-	 * @param {string} comment
-	 * @returns {dom} with formatted comment
+	 * @param   {string} comment
+	 * @returns {dom}    with formatted comment
 	 */
 
 	formatComment(comment) {
@@ -47,29 +47,73 @@ class TransactionList extends React.Component {
 
 	/**
 	 * Renders list of transactions of given year
-	 * @param {string} year
-	 * @returns {dom} with transactions of this year
+	 * @param   {string} year
+	 * @returns {dom}    with transactions of this year
 	 */
 
 	renderItems(year) {
+
+		// Get completed transactions of given year and sort them by date
+
+		let items = this.props.data
+			.filter(item => item.date.includes(year))
+			.filter(item => item.status == 'Completed')
+			.sort((b, a) => Date.parse(a.date) - Date.parse(b.date));
+
+		if (this.props.incomeOnly) {
+			items = items.filter(item => item.amount > 0);
+		}
+
+		// Group transactions
+
+		let groups = this.groupTransactions(items, 'description');
+
+		// Render transactions
+
 		return(
 			<div className="year_items">
-				{this.props.data
-					.filter(item => item.date.includes(year))
-					.filter(item => item.status == 'Completed')
-					.sort((b, a) => Date.parse(a.date) - Date.parse(b.date))
-					.map((item, i) =>
-					<li key={item.id} className={(item.amount > 0 ? 'positive' : 'negative')}>
-						<span onClick={(e) => this.editTransaction(item, e)}>{(item.date).substring(0, item.date.length - 6)}</span>
-						<span>{item.description}</span>
-						<span><div dangerouslySetInnerHTML={{ __html: this.formatComment(item.comment) }} /></span>
-						<span>{item.currency}</span>
-						<span className="bold">{(parseFloat(item.amount).toLocaleString('en-US',{style:'currency',currency:'USD'})).replace('$','')}</span>
-						<span className="remove" onClick={(e) => this.removeTransaction(item.id, e)}><i className="icon-cancel"></i></span>
-					</li>
-				)}
+				{Object.keys(groups).map(group => {
+					return(
+						<div className="group" key={group}>
+							<h3>{group}</h3>
+							{groups[group].map((item) =>
+								<li key={item.id} className={(item.amount > 0 ? 'positive' : 'negative')}>
+									<span onClick={(e) => this.editTransaction(item, e)}>{(item.date).substring(0, item.date.length - 6)}</span>
+									<span>{item.description}</span>
+									<span><div dangerouslySetInnerHTML={{ __html: this.formatComment(item.comment) }} /></span>
+									<span>{item.currency}</span>
+									<span className="bold">{(parseFloat(item.amount).toLocaleString('en-US',{style:'currency',currency:'USD'})).replace('$','')}</span>
+									<span className="remove" onClick={(e) => this.removeTransaction(item.id, e)}><i className="icon-cancel"></i></span>
+								</li>
+							)}
+						</div>
+					)
+				})}
 			</div>
 		)
+	}
+
+	/**
+	 * Groups transactions by given field
+	 * @param {string} by
+	 * @returns {object} with transactions grouped by given field
+	 */
+
+	groupTransactions(items, by) {
+		// Group transactions
+		let groups = {};
+		if (this.props.groupTransactions) {
+			for (let item of items) {
+				let group = item[by];
+				if (!groups[group]) {
+					groups[group] = [];
+				}
+				groups[group].push(item);
+			}
+		} else {
+			groups = {All: items};
+		}
+		return groups;
 	}
 
 	/**

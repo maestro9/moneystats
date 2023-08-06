@@ -1,16 +1,20 @@
 import './styles/style.min.css';
 import 'react-toastify/dist/ReactToastify.css';
 
+import * as firebase from 'firebase';
+import * as firebaseui from 'firebaseui';
+// import * as TransactionSettings from './components/TransactionSettings';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { toast, Slide } from 'react-toastify';
+
 import LineChart from './components/LineChart';
 import TransactionAddForm from './components/TransactionAddForm';
 import TransactionList from './components/TransactionList';
-import { toast, Slide } from 'react-toastify';
+import TransactionListSettings from './components/TransactionListSettings';
 
-import * as firebase from 'firebase';
-import * as firebaseui from 'firebaseui';
-import * as TransactionSettings from './components/TransactionSettings';
+
 
 // Configure Database
 
@@ -35,7 +39,9 @@ class Transactions extends React.Component {
 		super(props);
 		this.state = {
 			data: null,
-			years: null
+			years: null,
+			incomeOnly: true,
+			groupTransactions: true,
 		};
 
 		this.fetchData         = this.fetchData.bind(this);
@@ -316,15 +322,20 @@ class Transactions extends React.Component {
 					<TransactionAddForm ref={this.transactionAddFormRef} saveTransaction={this.saveTransaction} />
 				</div>
 				<div id="transactions_list">
-					<div id="transaction_settings" className="flex">
-						<div id="settings_filter" className="switch">
-							<label>Display income only<input type="checkbox" defaultChecked /><span className="slider"></span></label>
-						</div>
-						<div id="settings_removing" className="switch">
-							<label>Disable removing<input type="checkbox" defaultChecked /><span className="slider"></span></label>
-						</div>
-					</div>
-					<TransactionList data={this.state.data} years={this.state.years} removeTransaction={this.removeTransaction} editTransaction={this.editTransaction} />
+					<TransactionListSettings
+						incomeOnly={this.state.incomeOnly}
+						groupTransactions={this.state.groupTransactions}
+						switchIncomeOnly={value => this.setState({incomeOnly: value})}
+						switchGroupTransactions={value => this.setState({groupTransactions: value})}
+					/>
+					<TransactionList
+						data={this.state.data}
+						years={this.state.years}
+						incomeOnly={this.state.incomeOnly}
+						groupTransactions={this.state.groupTransactions}
+						removeTransaction={this.removeTransaction}
+						editTransaction={this.editTransaction}
+					/>
 				</div>
 			</div>
 		);
