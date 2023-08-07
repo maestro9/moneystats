@@ -1,0 +1,129 @@
+.tag
+  padding: 0 10px
+  color: #fff
+  font-weight: 600
+  font-size: 14px
+  font-style: normal
+  text-transform: uppercase
+  border-radius: 26px
+  display: inline-block
+  background: $color-green
+  cursor: default
+  &.positive
+    background: $color-positive
+  &.negative
+    background: $color-negative
+
+#transactions
+  &.show_only_income
+    li.negative
+      display: none
+  &.disable_removing
+    li span:nth-of-type(6)
+      display: none!important
+
+.transactions
+  display: flex
+  flex-direction: column
+
+  .year
+    margin-bottom: 3rem
+    h2
+      margin-bottom: 2rem
+    .total
+      @extend .tag
+      position: absolute
+      right: 70px
+      margin-top: -65px
+
+  .group
+    margin-bottom: 24px
+    &:last-of-type
+      margin-bottom: 0
+    &.closed
+      li
+        display: none
+    h4
+      border-bottom: 1px $color-border solid
+      padding-bottom: 13px
+      margin-bottom: 13px
+      cursor: pointer
+      transition-duration: .3s
+      &:hover
+        color: $color-link
+      .total
+        margin-top: 7px
+
+  li
+    display: flex
+    justify-content: space-between
+    position: relative
+    margin-right: -40px
+    padding-right: 40px
+    &.positive span:nth-of-type(5)
+      color: $color-positive
+    &.negative span:nth-of-type(5)
+      color: $color-negative
+    &:hover
+      span:nth-of-type(6)
+        display: block
+
+    img
+      width: 20px
+      vertical-align: middle
+      margin-right: 5px
+
+    .tag
+      height: 20px
+      line-height: 20px
+      font-size: 12px
+      padding: 0 7px
+      &.cover
+        background: #9E5DB4
+      &.remix
+        background: #029CD8
+      &.mixing
+        // default color
+      &.original
+        background: #00A085
+      &.royalties
+        background: #abab9e
+      &.dev
+        background: #ffa937
+
+    span
+      // date
+      &:first-of-type
+        width: 9%
+        color: #c3c3c3
+        font-family: $font-mono
+        cursor: pointer
+        transition-duration: .3s
+        &:hover
+          color: $color-link
+      // description
+      &:nth-of-type(2)
+        width: 39%
+      // comment
+      &:nth-of-type(3)
+        width: 39%
+        color: #c3c3c3
+      // currency
+      &:nth-of-type(4)
+        width: 3%
+        font-family: $font-mono
+      // amount
+      &:nth-of-type(5)
+        width: 10%
+        text-align: right
+      // delete
+      &:nth-of-type(6)
+        display: none
+        padding: 0 5px
+        position: absolute
+        right: 0
+        color: #cbcbcb
+        cursor: pointer
+        transition-duration: .3s
+        &:hover
+          color: #f26e6e
