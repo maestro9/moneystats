@@ -343,6 +343,7 @@ class TransactionAddForm extends Component {
 						<select name="group">
 							<option value="Other">Other</option>
 							<option value="---">---</option>
+							<option value="Bills">Bills</option>
 							<option value="Food">Food</option>
 							<option value="Rent">Rent</option>
 							<option value="Shopping">Shopping</option>

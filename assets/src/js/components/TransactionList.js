@@ -83,12 +83,11 @@ class TransactionList extends Component {
 
 	renderItems(year) {
 
-		// Get completed transactions of given year and sort them by date
+		// Get completed transactions of given year
 
 		let items = this.props.data
 			.filter(item => item.date.includes(year))
-			.filter(item => item.status == 'Completed')
-			.sort((b, a) => Date.parse(a.date) - Date.parse(b.date));
+			.filter(item => item.status == 'Completed');
 
 		if (this.props.incomeOnly) {
 			items = items.filter(item => item.amount > 0);
@@ -107,7 +106,7 @@ class TransactionList extends Component {
 					const gClassName = gTotal > 0 ? 'positive' : 'negative';
 					const gTotalFormatted = formatMoney(gTotal, true);
 					return(
-						<div className="group" key={group}>
+						<div className="group closed" key={group}>
 							{this.props.groupTransactions &&
 								<h4 onClick={(e) => e.target.parentNode.classList.toggle('closed')}>
 									{group}
@@ -186,6 +185,17 @@ class TransactionList extends Component {
 				}
 			}
 			groups[group].total = total;
+		}
+		// Sort groups by total
+		groups = Object.keys(groups).sort((a, b) => {
+			return groups[b].total - groups[a].total;
+		}).reduce((obj, key) => {
+			obj[key] = groups[key];
+			return obj;
+		}, {});
+		// Sort items in groups by date
+		for (let group in groups) {
+			groups[group].sort((b, a) => Date.parse(a.date) - Date.parse(b.date));
 		}
 		// Return groups
 		return groups;
