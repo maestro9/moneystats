@@ -45,6 +45,7 @@ class App extends Component {
 		this.state = {
 			data: null,
 			years: null,
+			presets: null,
 			incomeOnly: true,
 			groupTransactions: true,
 		};
@@ -53,6 +54,8 @@ class App extends Component {
 		this.saveTransaction   = this.saveTransaction.bind(this);
 		this.editTransaction   = this.editTransaction.bind(this);
 		this.removeTransaction = this.removeTransaction.bind(this);
+		this.savePreset			   = this.savePreset.bind(this);
+		this.removePreset			 = this.removePreset.bind(this);
 		this.fakeData          = this.fakeData.bind(this);
 
 		this.transactionAddFormRef = React.createRef();
@@ -203,6 +206,68 @@ class App extends Component {
 
 
 	/**
+	 * Saves preset to database and updates state
+	 * @param {string} id       id of document to save
+	 * @param {object} document document to save
+	 * @param {string} action   action to perform (add/edit)
+	 */
+
+	async savePreset(id, document, action) {
+
+		// console.log(id, document, action);
+
+		try {
+			// Save to database
+			await setDoc(doc(db, "mdata_presets", id), document);
+			//  Notification
+			toast(`Preset saved`, {type: 'success'});
+			// Extend document
+			document.id = id;
+			// Set state
+			this.setState(state => ({
+				presets: state.presets.pushOrUpdate(document, action)
+			}));
+
+		} catch (error) {
+			// Log error
+			console.error(`Error saving preset with id ${id}: ${error}`);
+			// Notification
+			toast("Couldn't save preset", {type: 'error'});
+		}
+
+	}
+
+
+
+	/**
+	 * Removes preset from database and updates state
+	 * @param {string} id of removing document
+	 */
+
+	async removePreset(id) {
+
+		try {
+			// Remove from database
+			await deleteDoc(doc(db, "mdata_presets", id));
+			// Notification
+			toast(`Preset removed`, {type: 'success'});
+			// Set state
+			this.setState(state => ({
+				presets: state.presets.filter(x => x.id != id),
+			}));
+
+		} catch (error) {
+			// Log error
+			console.error(`Error removing preset with id ${id}: ${error}`);
+			// Notification
+			toast("Couldn't remove preset", {type: 'error'});
+		}
+
+	}
+
+
+
+	/**
 	 * Gets documents from database and updates state
 	 */
 
@@ -210,9 +275,11 @@ class App extends Component {
 
 		try {
 
-			const items = [];
-			const years = [];
-			const docs  = await getDocs(query(collection(db, "mdata")));
+			const items   = [];
+			const years   = [];
+			const presets = [];
+			const docs    = await getDocs(query(collection(db, "mdata")));
+			const docs2   = await getDocs(query(collection(db, "mdata_presets")));
 
 			docs.forEach(doc => {
 				let item = {
@@ -224,9 +291,18 @@ class App extends Component {
 				years.pushUnique(item.year);
 			});
 
+			docs2.forEach(doc => {
+				let item = {
+					...doc.data(),
+					id: doc.id
+				}
+				presets.push(item);
+			});
+
 			this.setState({
 				data: items,
-				years: years.sort().reverse()
+				years: years.sort().reverse(),
+				presets: presets.sort((a, b) => a.preset_name.localeCompare(b.preset_name))
 			});
 
 		} catch (error) {
@@ -247,7 +323,8 @@ class App extends Component {
 	fakeData() {
 		this.setState({
 			data: defaultData.data,
-			years: defaultData.years
+			years: defaultData.years,
+			presets: defaultData.presets
 		});
 	}
 
@@ -264,7 +341,13 @@ class App extends Component {
 					<LineChart data={this.state.data} />
 				</div>
 				<div id="transaction_form">
-					<TransactionAddForm ref={this.transactionAddFormRef} saveTransaction={this.saveTransaction} />
+					<TransactionAddForm
+						ref={this.transactionAddFormRef}
+						saveTransaction={this.saveTransaction}
+						presets={this.state.presets}
+						savePreset={this.savePreset}
+						removePreset={this.removePreset}
+					/>
 				</div>
 				<div id="transactions_list">
 					<TransactionListSettings

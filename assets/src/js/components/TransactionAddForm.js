@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Moment from 'moment';
 import { toast } from 'react-toastify';
+import TransactionPresets from './TransactionPresets';
 
 
 // Today
@@ -328,6 +329,14 @@ class TransactionAddForm extends Component {
 				<input type="hidden" name="id" />
 				<h2>Add Transaction</h2>
 				<div className="reset_form" onClick={this.resetForm.bind(this)}>Reset</div>
+
+				<TransactionPresets
+					presets={this.props.presets}
+					populateForm={this.populateForm.bind(this)}
+					savePreset={this.props.savePreset}
+					removePreset={this.props.removePreset}
+				/>
+
 				<div className="flex">
 
 					<label>
