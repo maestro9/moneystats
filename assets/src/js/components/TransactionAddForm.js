@@ -234,7 +234,7 @@ class TransactionAddForm extends Component {
 			if (amount_usd) {
 				amount_usd = amount_usd.replace(/,/g, '');
 			} else {
-				amount_usd = await this.convertToUsd2(date, amount, currency) || 0;
+				amount_usd = await this.convertToUsd(date, amount, currency) || 0;
 			}
 		}
 

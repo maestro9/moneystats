@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Line } from 'react-chartjs-2';
 import Moment   from 'moment';
+import { formatMoney } from '../simple/helpers';
 
 import {
   Chart as ChartJS,
@@ -194,9 +195,52 @@ class LineChart extends Component {
 		return (
 			<ul className="yearStats">
 				{Object.keys(stats).map((key) =>
-					<li key={key}><b>{key}:</b>{(stats[key]).toLocaleString('en-US',{style:'currency',currency:'USD'})}</li>
+					<li key={key}><b>{key}:</b>{formatMoney(stats[key], true)}</li>
 				)}
 			</ul>
+		);
+	}
+
+	/**
+	 * Tooltip footer
+	 */
+
+	tooltipFooter(context) {
+		const dataset = context[0].dataset.label;
+		const date = context[0].label.split(' ');
+		const year = date[0];
+		const month = date[1];
+		const data = {};
+		// Populate data object
+		for (let item of this.props.data) {
+			const dateMatch = item.date.includes(`${month}, ${year}`);
+			const completed = item.status == "Completed";
+			const amountMatch = dataset == "Income" ? item.amount > 0 : item.amount < 0;
+			if (dateMatch && completed && amountMatch) {
+				const amount = item.currency.toLowerCase() == "usd" ? item.amount : item.amount_usd;
+				const key = (item.group + ':').padEnd(16, ' ');
+				if (!data[key]) { data[key] = 0; }
+				data[key] += parseFloat(amount);
+			}
+		}
+		// Sort keys
+		const ordered = {};
+		Object.keys(data).sort().forEach(function(key) {
+			ordered[key] = data[key];
+		});
+		// Add totals
+		const pre = dataset == "Income" ? '' : '-';
+		const final = {
+			'Total:          ': pre + context[0].parsed.y,
+			'': '',
+			...ordered
+		};
+		// Display data
+		return(
+			Object.keys(final).map((key) => {
+				if (final[key].length == 0) { return ''; }
+				return `${key}${formatMoney(final[key], true)}`;
+			})
 		);
 	}
 
@@ -226,6 +270,37 @@ class LineChart extends Component {
 			legend: {
 				position: 'bottom',
 				display: false,
+			},
+			plugins: {
+				tooltip: {
+					padding: 10,
+					titleFont: {
+						weight: 'bold',
+						family: 'monospace',
+						size: 16
+					},
+					footerMarginTop: 12,
+					footerSpacing: 0,
+					footerFont: {
+						weight: 'normal',
+						family: 'monospace',
+						size: 14
+					},
+					usePointStyle: true,
+					callbacks: {
+						labelPointStyle: (context) => {
+							return {
+								pointStyle: false,
+							};
+						},
+						label: (context) => {
+							return '';
+						},
+						footer: (context) => {
+							return this.tooltipFooter(context);
+						}
+					}
+				}
 			}
 		};
 
