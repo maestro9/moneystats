@@ -50,13 +50,14 @@ class App extends Component {
 			groupTransactions: true,
 		};
 
-		this.fetchData         = this.fetchData.bind(this);
-		this.saveTransaction   = this.saveTransaction.bind(this);
-		this.editTransaction   = this.editTransaction.bind(this);
-		this.removeTransaction = this.removeTransaction.bind(this);
-		this.savePreset			   = this.savePreset.bind(this);
-		this.removePreset			 = this.removePreset.bind(this);
-		this.fakeData          = this.fakeData.bind(this);
+		this.fetchData            = this.fetchData.bind(this);
+		this.saveTransaction      = this.saveTransaction.bind(this);
+		this.editTransaction      = this.editTransaction.bind(this);
+		this.removeTransaction    = this.removeTransaction.bind(this);
+		this.duplicateTransaction = this.duplicateTransaction.bind(this);
+		this.savePreset			      = this.savePreset.bind(this);
+		this.removePreset			    = this.removePreset.bind(this);
+		this.fakeData             = this.fakeData.bind(this);
 
 		this.transactionAddFormRef = React.createRef();
 	}
@@ -201,6 +202,21 @@ class App extends Component {
 
 	editTransaction(item) {
 		this.transactionAddFormRef.current.populateForm(item);
+	}
+
+
+
+	/**
+	 * Populates TransactionAddForm with item data, but clears id and date
+	 * @param {object} item to duplicate
+	 */
+
+	duplicateTransaction(item) {
+		const dateInput = document.querySelector('#transaction_form form input[name="date"]');
+		const defaultDate = dateInput.defaultValue;
+		this.transactionAddFormRef.current.populateForm({
+			...item, id: null, date: defaultDate
+		});
 	}
 
 
@@ -363,6 +379,7 @@ class App extends Component {
 						groupTransactions={this.state.groupTransactions}
 						removeTransaction={this.removeTransaction}
 						editTransaction={this.editTransaction}
+						duplicateTransaction={this.duplicateTransaction}
 					/>
 				</div>
 				<ToastContainer autoClose={5000} transition={Slide} />

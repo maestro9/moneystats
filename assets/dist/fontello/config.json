@@ -29,6 +29,12 @@
       "css": "clock",
       "code": 59394,
       "src": "entypo"
+    },
+    {
+      "uid": "c8585e1e5b0467f28b70bce765d5840c",
+      "css": "docs",
+      "code": 61637,
+      "src": "fontawesome"
     }
   ]
 }

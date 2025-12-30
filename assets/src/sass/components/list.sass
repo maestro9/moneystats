@@ -19,7 +19,7 @@
     li.negative
       display: none
   &.disable_removing
-    li span:nth-of-type(6)
+    div.actions span.remove
       display: none!important
 
 .transactions
@@ -65,8 +65,10 @@
     &.negative span:nth-of-type(5)
       color: $color-negative
     &:hover
-      span:nth-of-type(6)
-        display: block
+      div.actions
+        pointer-events: all
+        opacity: 1
+        margin-top: 0
 
     img
       width: 20px
@@ -91,16 +93,12 @@
       &.dev
         background: #ffa937
 
-    span
+    > span
       // date
       &:first-of-type
         width: 9%
         color: #c3c3c3
         font-family: $font-mono
-        cursor: pointer
-        transition-duration: .3s
-        &:hover
-          color: $color-link
       // description
       &:nth-of-type(2)
         width: 39%
@@ -116,14 +114,28 @@
       &:nth-of-type(5)
         width: 10%
         text-align: right
-      // delete
-      &:nth-of-type(6)
-        display: none
-        padding: 0 5px
-        position: absolute
-        right: 0
-        color: #cbcbcb
+
+    // buttons
+    div.actions
+      position: absolute
+      right: 0
+      color: #cbcbcb
+      pointer-events: none
+      opacity: 0
+      margin-top: 10px
+      transition-duration: .3s
+      left: calc(100% - 28px)
+      width: max-content
+      background: #fff
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2)
+      padding: 2px
+      border-radius: 5px
+
+      > span
         cursor: pointer
         transition-duration: .3s
         &:hover
-          color: #f26e6e
+          color: $color-text
+          &.remove
+            color: #f26e6e
+

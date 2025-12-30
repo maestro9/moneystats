@@ -33,6 +33,19 @@ class TransactionList extends Component {
 
 
 	/**
+	* Doesn't really do anything. Sends item's id to real duplicating function
+	* @param {object} item to duplicate
+	* @param {object} event
+	 */
+
+	duplicateTransaction(item, event) {
+		event.preventDefault();
+		this.props.duplicateTransaction(item);
+	}
+
+
+
+	/**
 	 * Returns formatted comment
 	 * @param   {string} comment
 	 * @returns {dom}    with formatted comment
@@ -61,17 +74,17 @@ class TransactionList extends Component {
 	 * @returns {dom}    with formatted description
 	 */
 
-		formatDescription(text) {
-			if (text) {
-				let icons = ['Kaspi', 'Onlinebank', 'Halyk', 'PayPal', 'Payoneer', 'ATM', 'LTD', 'Skrill', 'Cash'];
-				for (let icon of icons) {
-					if (text.includes(`[${icon}]`)) {
-						text = text.replace(`[${icon}]`, `<img src="./assets/dist/images/${icon.toLowerCase()}.png" alt="${icon}" />`);
-					}
+	formatDescription(text) {
+		if (text) {
+			let icons = ['Kaspi', 'Onlinebank', 'Halyk', 'PayPal', 'Payoneer', 'ATM', 'LTD', 'Skrill', 'Cash'];
+			for (let icon of icons) {
+				if (text.includes(`[${icon}]`)) {
+					text = text.replace(`[${icon}]`, `<img src="./assets/dist/images/${icon.toLowerCase()}.png" alt="${icon}" />`);
 				}
 			}
-			return text;
 		}
+		return text;
+	}
 
 
 
@@ -107,12 +120,10 @@ class TransactionList extends Component {
 					const gTotalFormatted = formatMoney(gTotal, true);
 					return(
 						<div className="group closed" key={group}>
-							{this.props.groupTransactions &&
-								<h4 onClick={(e) => e.target.parentNode.classList.toggle('closed')}>
-									{group}
-									<div className={'total ' + gClassName}>{gTotalFormatted}</div>
-								</h4>
-							}
+							<h4 onClick={(e) => e.target.parentNode.classList.toggle('closed')}>
+								{group}
+								<div className={'total ' + gClassName}>{gTotalFormatted}</div>
+							</h4>
 							{groups[group].map((item) => {
 								const className  = item.amount > 0 ? 'positive' : 'negative';
 								const date       = item.date.substring(0, item.date.length - 6);
@@ -122,16 +133,24 @@ class TransactionList extends Component {
 								const title      = item.currency == "USD" ? '' : amount + ' ' + item.currency;
 								return (
 									<li key={item.id} className={className}>
-										<span onClick={(e) => this.editTransaction(item, e)}>{date}</span>
+										<span>{date}</span>
 										<span><div dangerouslySetInnerHTML={{ __html: this.formatDescription(item.description) }} /></span>
 										<span><div dangerouslySetInnerHTML={{ __html: this.formatComment(item.comment) }} /></span>
 										<span>USD</span>
 										<span className={'bold' + underline} title={title}>
 											{amount_usd}
 										</span>
-										<span className="remove" onClick={(e) => this.removeTransaction(item.id, e)}>
-											<i className="icon-cancel"></i>
-										</span>
+										<div className="actions">
+											<span className="edit" onClick={(e) => this.editTransaction(item, e)}>
+												<i className="icon-pencil"></i>
+											</span>
+											<span className="duplicate" onClick={(e) => this.duplicateTransaction(item, e)}>
+												<i className="icon-docs"></i>
+											</span>
+											<span className="remove" onClick={(e) => this.removeTransaction(item.id, e)}>
+												<i className="icon-cancel"></i>
+											</span>
+										</div>
 									</li>
 								)
 							}
@@ -242,12 +261,22 @@ class TransactionList extends Component {
 							.filter(item => item.status == 'Upcoming')
 							.map(item =>
 							<li key={item.id} className="positive">
-								<span onClick={(e) => this.editTransaction(item, e)}><i className="icon-clock"></i></span>
+								<span><i className="icon-clock"></i></span>
 								<span>{item.description}</span>
 								<span><div dangerouslySetInnerHTML={{ __html: this.formatComment(item.comment) }} /></span>
 								<span>{item.currency}</span>
 								<span className="bold">{(parseFloat(item.amount).toLocaleString('en-US',{style:'currency',currency:'USD'})).replace('$','')}</span>
-								<span className="remove" onClick={(e) => this.removeTransaction(item.id, e)}><i className="icon-cancel"></i></span>
+								<div className="actions">
+									<span className="edit" onClick={(e) => this.editTransaction(item, e)}>
+										<i className="icon-pencil"></i>
+									</span>
+									<span className="duplicate" onClick={(e) => this.duplicateTransaction(item, e)}>
+										<i className="icon-docs"></i>
+									</span>
+									<span className="remove" onClick={(e) => this.removeTransaction(item.id, e)}>
+										<i className="icon-cancel"></i>
+									</span>
+								</div>
 							</li>
 						)}
 					</div>
