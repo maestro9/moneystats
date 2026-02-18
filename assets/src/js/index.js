@@ -22,7 +22,8 @@ import TransactionList from './components/TransactionList';
 import TransactionListSettings from './components/TransactionListSettings';
 
 import { pushUnique, pushOrUpdate } from './simple/helpers';
-import { defaultData } from './simple/data';
+
+const LOCAL_DATA_KEY = 'mstats_local_data';
 
 
 
@@ -57,7 +58,9 @@ class App extends Component {
 		this.duplicateTransaction = this.duplicateTransaction.bind(this);
 		this.savePreset			      = this.savePreset.bind(this);
 		this.removePreset			    = this.removePreset.bind(this);
-		this.fakeData             = this.fakeData.bind(this);
+		this.buildYearsFromItems  = this.buildYearsFromItems.bind(this);
+		this.loadLocalData        = this.loadLocalData.bind(this);
+		this.saveLocalData        = this.saveLocalData.bind(this);
 
 		this.transactionAddFormRef = React.createRef();
 	}
@@ -67,7 +70,6 @@ class App extends Component {
 
 	componentDidMount() {
 		this.isSignedIn();
-		// this.fakeData();
 	}
 
 
@@ -134,6 +136,71 @@ class App extends Component {
 
 
 	/**
+	 * Builds sorted years list from items list
+	 * @param {array} items
+	 * @returns {array}
+	 */
+
+	buildYearsFromItems(items) {
+		const years = [];
+		for (let item of items) {
+			if (item && item.date) {
+				years.pushUnique(item.date.split(', ')[1]);
+			}
+		}
+		return years.sort().reverse();
+	}
+
+
+
+	/**
+	 * Loads data from local storage
+	 * @returns {object|null}
+	 */
+
+	loadLocalData() {
+		try {
+			const raw = localStorage.getItem(LOCAL_DATA_KEY);
+			if (!raw) return null;
+
+			const parsed = JSON.parse(raw);
+			const hasData = parsed && Array.isArray(parsed.data) && parsed.data.length > 0;
+			const hasPresets = parsed && Array.isArray(parsed.presets);
+
+			if (!hasData || !hasPresets) return null;
+
+			return {
+				data: parsed.data,
+				years: this.buildYearsFromItems(parsed.data),
+				presets: parsed.presets.sort((a, b) => a.preset_name.localeCompare(b.preset_name))
+			};
+		} catch (error) {
+			console.error(`Error reading local data: ${error}`);
+			return null;
+		}
+	}
+
+
+
+	/**
+	 * Saves data to local storage
+	 * @param {array} data
+	 * @param {array} presets
+	 */
+
+	saveLocalData() {
+		try {
+			const data = this.state.data || [];
+			const presets = this.state.presets || [];
+			localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify({data, presets}));
+		} catch (error) {
+			console.error(`Error saving local data: ${error}`);
+		}
+	}
+
+
+
+	/**
 	 * Saves transaction to database and updates state
 	 * @param {string} id       id of document to save
 	 * @param {object} document document to save
@@ -152,9 +219,11 @@ class App extends Component {
 			document.id = id;
 			// Set state
 			this.setState(state => ({
-				data:  state.data.pushOrUpdate(document, action),
-				years: state.years.pushUnique(document.year).sort().reverse()
-			}));
+				data:  [...state.data].pushOrUpdate(document, action),
+				years: [...state.years].pushUnique(document.year).sort().reverse()
+			}), () => {
+				this.saveLocalData();
+			});
 
 		} catch (error) {
 			// Log error
@@ -182,7 +251,10 @@ class App extends Component {
 			// Set state
 			this.setState(state => ({
 				data: state.data.filter(x => x.id != id),
-			}));
+				years: this.buildYearsFromItems(state.data.filter(x => x.id != id))
+			}), () => {
+				this.saveLocalData();
+			});
 
 		} catch (error) {
 			// Log error
@@ -241,8 +313,10 @@ class App extends Component {
 			document.id = id;
 			// Set state
 			this.setState(state => ({
-				presets: state.presets.pushOrUpdate(document, action)
-			}));
+				presets: [...state.presets].pushOrUpdate(document, action)
+			}), () => {
+				this.saveLocalData();
+			});
 
 		} catch (error) {
 			// Log error
@@ -270,7 +344,9 @@ class App extends Component {
 			// Set state
 			this.setState(state => ({
 				presets: state.presets.filter(x => x.id != id),
-			}));
+			}), () => {
+				this.saveLocalData();
+			});
 
 		} catch (error) {
 			// Log error
@@ -290,9 +366,13 @@ class App extends Component {
 	async fetchData() {
 
 		try {
+			const localData = this.loadLocalData();
+			if (localData) {
+				this.setState(localData);
+				return;
+			}
 
 			const items   = [];
-			const years   = [];
 			const presets = [];
 			const docs    = await getDocs(query(collection(db, "mdata")));
 			const docs2   = await getDocs(query(collection(db, "mdata_presets")));
@@ -304,7 +384,6 @@ class App extends Component {
 					year: doc.data().date.split(', ')[1]
 				}
 				items.push(item);
-				years.pushUnique(item.year);
 			});
 
 			docs2.forEach(doc => {
@@ -317,8 +396,10 @@ class App extends Component {
 
 			this.setState({
 				data: items,
-				years: years.sort().reverse(),
+				years: this.buildYearsFromItems(items),
 				presets: presets.sort((a, b) => a.preset_name.localeCompare(b.preset_name))
+			}, () => {
+				this.saveLocalData();
 			});
 
 		} catch (error) {
@@ -328,20 +409,6 @@ class App extends Component {
 			toast("Couldn't fetch data", {type: 'error'});
 		}
 
-	}
-
-
-
-	/**
-	 * Used only in development: loads fake data
-	 */
-
-	fakeData() {
-		this.setState({
-			data: defaultData.data,
-			years: defaultData.years,
-			presets: defaultData.presets
-		});
 	}
 
 

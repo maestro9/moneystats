@@ -18,7 +18,7 @@ class TransactionListSettings extends Component {
           Display income only
           <input
             type="checkbox"
-            defaultChecked={this.props.incomeOnly}
+            checked={this.props.incomeOnly}
             onChange = {(e) => { this.props.switchIncomeOnly(e.target.checked) }}
           />
           <span className="slider"></span>
@@ -32,7 +32,7 @@ class TransactionListSettings extends Component {
           Group transactions
           <input
             type="checkbox"
-            defaultChecked={this.props.groupTransactions}
+            checked={this.props.groupTransactions}
             onChange={(e) => { this.props.switchGroupTransactions(e.target.checked) }}
           />
           <span className="slider"></span>

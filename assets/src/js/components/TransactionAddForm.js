@@ -6,11 +6,13 @@ import TransactionPresets from './TransactionPresets';
 
 // Today
 
-const today       = new Date;
-const today_month = today.toLocaleString('en-US', { month: 'short' });
-const today_day   = today.toLocaleString('en-US', { day: '2-digit' });
-const today_year  = today.getFullYear();
-const today_full  = today_day + ' ' + today_month + ', ' + today_year;
+const today = () => {
+	const now = new Date();
+	const month = now.toLocaleString('en-US', { month: 'short' });
+	const day = now.toLocaleString('en-US', { day: '2-digit' });
+	const year = now.getFullYear();
+	return day + ' ' + month + ', ' + year;
+};
 
 
 
@@ -305,6 +307,10 @@ class TransactionAddForm extends Component {
 	resetForm() {
 		this.form.reset();
 		this.getField('id').value = "";
+		const dateField = this.getField('date');
+		const dateToday = today();
+		dateField.defaultValue = dateToday;
+		dateField.value = dateToday;
 	}
 
 
@@ -340,7 +346,7 @@ class TransactionAddForm extends Component {
 				<div className="flex">
 
 					<label>
-						Date <input type="text" name="date" defaultValue={today_full} />
+						Date <input type="text" name="date" defaultValue={today()} />
 					</label>
 
 					<label>
