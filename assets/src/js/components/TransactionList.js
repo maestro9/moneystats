@@ -124,15 +124,23 @@ class TransactionList extends Component {
 								{group}
 								<div className={'total ' + gClassName}>{gTotalFormatted}</div>
 							</h4>
-							{groups[group].map((item) => {
+							{groups[group].map((item, index) => {
 								const className  = item.amount > 0 ? 'positive' : 'negative';
 								const date       = item.date.substring(0, item.date.length - 6);
 								const amount     = formatMoney(item.amount);
 								const amount_usd = item.currency == "USD" ? amount : formatMoney(item.amount_usd);
 								const underline  = item.currency == "USD" ? '' : ' underline';
 								const title      = item.currency == "USD" ? '' : amount + ' ' + item.currency;
+								const prevItem   = groups[group][index - 1];
+								const itemMonth  = item.date.substring(3, 6);
+								const prevMonth  = prevItem ? prevItem.date.substring(3, 6) : null;
+								const border     = prevMonth && prevMonth !== itemMonth ? {
+									marginTop: '5px',
+									paddingTop: '5px',
+									borderTop: '1px dashed #e2e2e2'
+								} : null;
 								return (
-									<li key={item.id} className={className}>
+									<li key={item.id} className={className} style={border}>
 										<span>{date}</span>
 										<span><div dangerouslySetInnerHTML={{ __html: this.formatDescription(item.description) }} /></span>
 										<span><div dangerouslySetInnerHTML={{ __html: this.formatComment(item.comment) }} /></span>
